@@ -6,22 +6,22 @@ const {Storage} = require('@google-cloud/storage');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser'); // For parsing JSON request bodies
-const projectId = 'web-app-konstanz'
-const bucketName = 'web-app-konstanz-bucket';
-const storage = new Storage({ keyFilename: '/Users/christophewu/git/Basic-Web-App/myfiledepot/web-app-konstanz-967f85a35a39.json' });
-const bucket = storage.bucket(bucketName);
+
+const storage = new Storage({ keyFilename: process.env.GCLOUD_KEYFILE });
+const bucket = storage.bucket(process.env.BUCKET_NAME);
+
 
 const connector = new Connector();
 const clientOpts = await connector.getOptions({
-    instanceConnectionName: "web-app-konstanz:europe-west1:web-app-konstanz-sql",
-    ipType: 'PUBLIC',
+  instanceConnectionName: process.env.INSTANCE_CONNECTION_NAME,
+  ipType: 'PUBLIC',
 });
 
 const pool = await mysql.createPool({
-    ...clientOpts,
-    user: 'root',
-    password: 'a',
-    database: 'db',
+  ...clientOpts,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 });
 
 app.use(bodyParser.json());
